@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hitungan Mundur - SMP NEGERI 1 KANDAT (SPENSAKA)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: #0b132b;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Setup Card Mode */
+        .setup-card {
+            background: #1c2541;
+            width: 90%;
+            max-width: 480px;
+            padding: 2.5rem 2rem;
+            border-radius: 1.25rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .logo-spensaka {
+            width: 110px;
+            height: auto;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        .school-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .app-subtitle {
+            font-size: 0.95rem;
+            color: #38bdf8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 1.75rem;
+        }
+
+        .input-box {
+            background: #0b132b;
+            padding: 1.25rem;
+            border-radius: 1rem;
+            border: 1px solid #3a506b;
+            margin-bottom: 1.25rem;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.75rem;
+        }
+
+        .seconds-input {
+            width: 100%;
+            max-width: 180px;
+            background: #1c2541;
+            border: 2px solid #38bdf8;
+            color: #ffffff;
+            font-size: 2.25rem;
+            font-weight: 700;
+            text-align: center;
+            border-radius: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            outline: none;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .presets {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
+        }
+
+        .btn-preset {
+            background: rgba(56, 189, 248, 0.1);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-preset:hover {
+            background: #38bdf8;
+            color: #0b132b;
+        }
+
+        /* Volume Settings */
+        .volume-box {
+            background: #0b132b;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid #3a506b;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .volume-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        select.volume-select {
+            background: #1c2541;
+            color: #fff;
+            border: 1px solid #38bdf8;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-test-sound {
+            background: rgba(234, 179, 8, 0.15);
+            color: #eab308;
+            border: 1px solid rgba(234, 179, 8, 0.4);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-test-sound:hover {
+            background: #eab308;
+            color: #0b132b;
+        }
+
+        .btn-start-large {
+            width: 100%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #ffffff;
+            border: none;
+            padding: 1rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .btn-start-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+        }
+
+        /* Focus Mode Screen */
+        .focus-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #050a14;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .focus-screen.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .focus-number {
+            font-size: clamp(8rem, 35vw, 28rem);
+            font-weight: 900;
+            color: #f43f5e;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 50px rgba(244, 63, 94, 0.5);
+            user-select: none;
+        }
+
+        .focus-school-tag {
+            position: absolute;
+            top: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0.85;
+        }
+
+        .focus-school-tag img {
+            width: 40px;
+            height: auto;
+        }
+
+        .focus-school-tag span {
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #e2e8f0;
+        }
+
+        /* Floating Toolbar */
+        .floating-toolbar {
+            position: absolute;
+            bottom: 2.5rem;
+            background: rgba(30, 41, 59, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.6rem 1.25rem;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .tb-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .tb-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .tb-btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+        }
+
+        .tb-btn-danger:hover {
+            background: rgba(239, 68, 68, 0.8);
+            color: #ffffff;
+        }
+
+        /* Alert Banner */
+        .time-up-banner {
+            position: absolute;
+            top: 15%;
+            background: #ef4444;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.8);
+            display: none;
+            animation: bounce 0.6s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Setup Screen -->
+    <div class="setup-card" id="setupCard">
+        <img src="https://i.ibb.co.com/HfRL2ngJ/logo-v.png" alt="Logo SPENSAKA" class="logo-spensaka">
+        <div class="school-title">SMP NEGERI 1 KANDAT</div>
+        <div class="app-subtitle">Aplikasi Hitungan Mundur (SPENSAKA)</div>
+
+        <div class="input-box">
+            <label class="input-label" for="secondsInput">Atur Durasi (Detik):</label>
+            <input type="number" id="secondsInput" class="seconds-input" value="10" min="1" max="3600">
+            
+            <div class="presets">
+                <button class="btn-preset" onclick="setPreset(5)">5d</button>
+                <button class="btn-preset" onclick="setPreset(10)">10d</button>
+                <button class="btn-preset" onclick="setPreset(30)">30d</button>
+                <button class="btn-preset" onclick="setPreset(60)">1m</button>
+                <button class="btn-preset" onclick="setPreset(300)">5m</button>
+            </div>
+        </div>
+
+        <div class="volume-box">
+            <span class="input-label" style="margin-bottom:0.25rem;">Pengaturan Suara:</span>
+            <div class="volume-controls">
+                <select id="volumeSelect" class="volume-select" onchange="updateVolumeSetting()">
+                    <option value="0.5">🔊 Normal (50%)</option>
+                    <option value="0.85" selected>🔊 Keras (85%)</option>
+                    <option value="1.0">📢 Maksimal (100%)</option>
+                </select>
+                <button class="btn-test-sound" onclick="testSound()">Coba Suara</button>
+            </div>
+        </div>
+
+        <button class="btn-start-large" onclick="startFocusTimer()">▶ MULAI HITUNGAN MUNDUR</button>
+    </div>
+
+    <!-- Focus Screen -->
+    <div class="focus-screen" id="focusScreen">
+        <div class="focus-school-tag">
+            <img src="https://i.ibb.co.com/HfRL2ngJ/logo-v.png" alt="Logo SPENSAKA">
+            <span>SMP NEGERI 1 KANDAT</span>
+        </div>
+
+        <div class="time-up-banner" id="timeUpBanner">🔔 WAKTU HABIS! 🔔</div>
+
+        <div class="focus-number" id="focusDisplay">10</div>
+
+        <div class="floating-toolbar">
+            <button class="tb-btn" id="pauseBtn" onclick="togglePause()">⏸️ Jeda</button>
+            <button class="tb-btn" onclick="addExtraTime(10)">+10s</button>
+            <button class="tb-btn" onclick="resetFocusTimer()">🔄 Ulang</button>
+            <button class="tb-btn tb-btn-danger" onclick="exitFocus()">✖ Keluar</button>
+        </div>
+    </div>
+
+<script>
+    let timer = null;
+    let timeLeft = 10;
+    let initialDuration = 10;
+    let isRunning = false;
+    let audioCtx = null;
+    let volumeGain = 0.85; // Default volume tinggi
+
+    const setupCard = document.getElementById('setupCard');
+    const focusScreen = document.getElementById('focusScreen');
+    const focusDisplay = document.getElementById('focusDisplay');
+    const secondsInput = document.getElementById('secondsInput');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const timeUpBanner = document.getElementById('timeUpBanner');
+    const volumeSelect = document.getElementById('volumeSelect');
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
+
+    function updateVolumeSetting() {
+        volumeGain = parseFloat(volumeSelect.value) || 0.85;
+    }
+
+    // Fungsi pembuat suara nyaring & lantang
+    function playBeep(freq = 800, duration = 0.15, type = 'triangle') {
+        try {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            // 'triangle' atau 'square' memberikan suara yang jauh lebih nyaring dibanding 'sine'
+            osc.type = type; 
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            // Set Gain / Volume
+            gain.gain.setValueAtTime(volumeGain, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + duration);
+        } catch (e) {}
+    }
+
+    function playFinishAlarm() {
+        initAudio();
+        // Nada alarm penyelesaian yang keras dan tegas
+        const notes = [
+            { f: 523.25, d: 0.2, type: 'square' },
+            { f: 659.25, d: 0.2, type: 'square' },
+            { f: 783.99, d: 0.2, type: 'square' },
+            { f: 1046.50, d: 0.5, type: 'square' }
+        ];
+
+        notes.forEach((note, idx) => {
+            setTimeout(() => playBeep(note.f, note.d, note.type), idx * 220);
+        });
+    }
+
+    function testSound() {
+        updateVolumeSetting();
+        playBeep(880, 0.2, 'square');
+    }
+
+    function setPreset(sec) {
+        secondsInput.value = sec;
+    }
+
+    function startFocusTimer() {
+        updateVolumeSetting();
+        initAudio();
+
+        initialDuration = parseInt(secondsInput.value) || 10;
+        timeLeft = initialDuration;
+        
+        updateFocusDisplay(timeLeft);
+        timeUpBanner.style.display = 'none';
+
+        setupCard.style.display = 'none';
+        focusScreen.classList.add('active');
+
+        isRunning = true;
+        pauseBtn.textContent = '⏸️ Jeda';
+
+        clearInterval(timer);
+        timer = setInterval(tick, 1000);
+    }
+
+    function tick() {
+        timeLeft--;
+        updateFocusDisplay(timeLeft);
+
+        // Suara detikan: 3 detik terakhir menggunakan gelombang 'square' yang sangat jelas
+        if (timeLeft > 0 && timeLeft <= 3) {
+            playBeep(950, 0.15, 'square');
+        } else if (timeLeft > 3) {
+            playBeep(650, 0.1, 'triangle');
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            isRunning = false;
+            playFinishAlarm();
+            timeUpBanner.style.display = 'block';
+            pauseBtn.textContent = '▶️ Mulai';
+        }
+    }
+
+    function updateFocusDisplay(sec) {
+        focusDisplay.textContent = sec >= 0 ? sec : 0;
+    }
+
+    function togglePause() {
+        if (timeLeft <= 0) {
+            timeLeft = initialDuration;
+            timeUpBanner.style.display = 'none';
+            isRunning = true;
+            pauseBtn.textContent = '⏸️ Jeda';
+            timer = setInterval(tick, 1000);
+            return;
+        }
+
+        if (isRunning) {
+            clearInterval(timer);
+            isRunning = false;
+            pauseBtn.textContent = '▶️ Lanjut';
+        } else {
+            isRunning = true;
+            pauseBtn.textContent = '⏸️ Jeda';
+            timer = setInterval(tick, 1000);
+        }
+    }
+
+    function addExtraTime(sec) {
+        timeLeft += sec;
+        updateFocusDisplay(timeLeft);
+        if (timeUpBanner.style.display === 'block') {
+            timeUpBanner.style.display = 'none';
+            if (!isRunning) {
+                togglePause();
+            }
+        }
+    }
+
+    function resetFocusTimer() {
+        clearInterval(timer);
+        timeUpBanner.style.display = 'none';
+        timeLeft = initialDuration;
+        updateFocusDisplay(timeLeft);
+        isRunning = true;
+        pauseBtn.textContent = '⏸️ Jeda';
+        timer = setInterval(tick, 1000);
+    }
+
+    function exitFocus() {
+        clearInterval(timer);
+        isRunning = false;
+        focusScreen.classList.remove('active');
+        setTimeout(() => {
+            setupCard.style.display = 'block';
+        }, 300);
+    }
+</script>
+
+</body>
+</html>
